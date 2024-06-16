@@ -24,8 +24,8 @@ public class GpsService extends Service
     public LocationManager locationManager;
     public Location position = null;
     public Location previousPosition = null;
-    public double latitude = 54.125;
-    public double longitude = 18.33;
+    public double latitude;
+    public double longitude;
     double recentDistance;
     double fullDistance;
     double steps = 0;
