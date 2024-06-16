@@ -13,13 +13,14 @@ import android.util.Log;
 
 import java.util.List;
 
-public class Gps extends Service
+public class GpsService extends Service
 {
     // remember to enable location for the app in phone emulator
+    private LocationDatabaseHelper dbHelper; // database
     public class Connection extends Binder {
-        Gps getGps() { return Gps.this; }
+        GpsService getGps() { return GpsService.this; }
     }
-    private final IBinder binder = new Gps.Connection();
+    private final IBinder binder = new GpsService.Connection();
     public LocationManager locationManager;
     public Location position = null;
     public Location previousPosition = null;
@@ -27,6 +28,7 @@ public class Gps extends Service
     public double longitude = 18.33;
     double recentDistance;
     double fullDistance;
+    double steps = 0;
     double stepLength = 0.7;
     String[] providers;
     String provider;
@@ -48,11 +50,16 @@ public class Gps extends Service
             longitude = newPosition.getLongitude();
             recentDistance = newPosition.distanceTo(previousPosition);
             fullDistance += recentDistance;
+            steps += (int) (fullDistance / stepLength);
             String distance =  "Recent distance " + String.format("%.2f", recentDistance) + " Meters\n" +
                     "Full distance " + String.format("%.2f", fullDistance) + " Meters\n" +
-                    "Nubmer of steps " + (int) (fullDistance / stepLength);
+                    "Number of steps " + steps;
             previousPosition = newPosition;
 
+            // save location to database
+            dbHelper.addLocation(latitude, longitude, steps);
+
+            // send location to MainActivity
             if (handler != null) {
                 handler.post(new Runnable() {
                     @Override
@@ -60,6 +67,7 @@ public class Gps extends Service
                         Intent intent = new Intent("com.example.labuslugionly.UPDATE_DISTANCE");
                         intent.putExtra("latitude", latitude);
                         intent.putExtra("longitude", longitude);
+                        intent.putExtra("steps", steps);
                         intent.putExtra("distance", distance);
                         sendBroadcast(intent);
                     }
@@ -71,6 +79,8 @@ public class Gps extends Service
     @Override
     public IBinder onBind(Intent intent) {
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        dbHelper = new LocationDatabaseHelper(this);
+
         List<String> list = locationManager.getProviders(true);
         int numberOfProviders = list.size();
         providers = new String[numberOfProviders];

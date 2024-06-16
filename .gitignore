@@ -1,3 +1,7 @@
+# API KEY
+/res/values/secrets.xml
+*secrets.xml
+
 ##### Windows
 # Windows thumbnail cache files
 Thumbs.db
