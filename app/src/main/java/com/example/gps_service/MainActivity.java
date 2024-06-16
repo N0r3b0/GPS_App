@@ -23,6 +23,8 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity {
     TextView tVLocation, tVLatitude, tVLongitude, info;
     private GpsService gpsService;
+    private boolean isTracking = false;
+    private Intent gpsServiceIntent;
     private boolean bound;
     private Intent intent;
     private Handler handler;
@@ -34,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             Log.v("saved", String.valueOf(savedInstanceState.getDouble("distance")));
         }
+
+        gpsServiceIntent = new Intent(this, GpsService.class);
+
         setContentView(R.layout.activity_main);
         tVLocation = findViewById(R.id.tVLocation);
         tVLatitude = findViewById(R.id.tVLatitude);
@@ -47,31 +52,55 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter("com.example.labuslugionly.UPDATE_DISTANCE");
         registerReceiver(updateDistanceReceiver, filter, RECEIVER_EXPORTED);
 
+        // routes buttons
+        Button startTrackingButton = findViewById(R.id.startTrackingButton);
+        Button stopTrackingButton = findViewById(R.id.stopTrackingButton);
         Button showMapButton = findViewById(R.id.showMapButton);
+
+        startTrackingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!isTracking) {
+                    startService(gpsServiceIntent);
+                    isTracking = true;
+                }
+            }
+        });
+
+        stopTrackingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isTracking) {
+                    stopService(gpsServiceIntent);
+                    isTracking = false;
+                }
+            }
+        });
+
         showMapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                Intent intent = new Intent(MainActivity.this, RoutesListActivity.class);
                 startActivity(intent);
             }
         });
     }
 
-    private ServiceConnection connection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName comName, IBinder binder) {
-            GpsService.Connection con = (GpsService.Connection) binder;
-            gpsService = con.getGps();
-            gpsService.setHandler(handler); // ustawiam handlera teraz nie będzie !null wewnątrz gps clss
-            bound = true;
-            Log.v("onServiceConnected", "Service connected");
-        }
-        @Override
-        public void onServiceDisconnected(ComponentName comName){
-            bound = false;
-            Log.v("onServiceDisconnected", "Service disconnected");
-        }
-    };
+//    private ServiceConnection connection = new ServiceConnection() {
+//        @Override
+//        public void onServiceConnected(ComponentName comName, IBinder binder) {
+//            GpsService.Connection con = (GpsService.Connection) binder;
+//            gpsService = con.getGps();
+//            gpsService.setHandler(handler); // ustawiam handlera teraz nie będzie !null wewnątrz gps clss
+//            bound = true;
+//            Log.v("onServiceConnected", "Service connected");
+//        }
+//        @Override
+//        public void onServiceDisconnected(ComponentName comName){
+//            bound = false;
+//            Log.v("onServiceDisconnected", "Service disconnected");
+//        }
+//    };
 
     private BroadcastReceiver updateDistanceReceiver = new BroadcastReceiver() {
         @Override
@@ -89,40 +118,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    // DATABASE
-    private void displayAllLocations() {
-        Cursor cursor = (Cursor) dbHelper.getAllLocations();
-        StringBuilder builder = new StringBuilder();
-        while (cursor.moveToNext()) {
-            @SuppressLint("Range") double latitude = cursor.getDouble(cursor.getColumnIndex(LocationDatabaseHelper.COLUMN_LATITUDE));
-            @SuppressLint("Range") double longitude = cursor.getDouble(cursor.getColumnIndex(LocationDatabaseHelper.COLUMN_LONGITUDE));
-            @SuppressLint("Range") String steps = cursor.getString(cursor.getColumnIndex(LocationDatabaseHelper.COLUMN_STEPS));
-            @SuppressLint("Range") String timestamp = cursor.getString(cursor.getColumnIndex(LocationDatabaseHelper.COLUMN_TIMESTAMP));
-            builder.append("Lat: ").append(latitude).append(", Lon: ").append(longitude).append(", Time: ").append(timestamp).append("\n");
-        }
-        cursor.close();
-        Toast.makeText(this, builder.toString(), Toast.LENGTH_LONG).show();
-    }
-
-
-
-    // BUTTONS METHODS
-    public void bind(View v){
-        intent = new Intent(this, GpsService.class);
-        startService(intent);
-        bindService(intent, connection, Context.BIND_NOT_FOREGROUND);
-        bound = true;
-    }
-    public void unbind(View v){
-        if (bound) {
-            unbindService(connection);
-            bound = false;
-            Log.v("unbind", "Service disconnected");
-        }
-        else{
-            Log.v("unbind", "No service connected");
-        }
-    }
     public void stop(View v){
         intent = new Intent(this, GpsService.class);
         stopService(intent);
@@ -146,6 +141,5 @@ public class MainActivity extends AppCompatActivity {
     }
     public void showLocations(View v)
     {
-        displayAllLocations();
     }
 }

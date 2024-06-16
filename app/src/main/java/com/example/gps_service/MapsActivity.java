@@ -17,23 +17,21 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.util.List;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
-
     private GoogleMap mMap;
     private LocationDatabaseHelper dbHelper;
     private LineView lineView;
+    private long routeId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        // Inicjalizacja bazy danych
         dbHelper = new LocationDatabaseHelper(this);
+        lineView = findViewById(R.id.lineView);
 
-        // Inicjalizacja LineView
-        lineView = findViewById(R.id.lineView); // Upewnij się, że w layout masz LineView z odpowiednim ID
+        routeId = getIntent().getLongExtra("routeId", -1);
 
-        // Uzyskanie referencji do MapFragment
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
@@ -44,26 +42,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Pobranie danych z bazy
-        List<LatLng> locations = dbHelper.getAllLocations();
+        if (routeId != -1) {
+            List<LatLng> locations = dbHelper.getLocationsForRoute(routeId);
+            if (locations.size() > 0) {
+                PolylineOptions polylineOptions = new PolylineOptions().addAll(locations).color(Color.RED).width(5);
+                mMap.addPolyline(polylineOptions);
 
-        // Rysowanie trasy
-        if (locations.size() > 0) {
-            PolylineOptions polylineOptions = new PolylineOptions().addAll(locations).color(Color.RED).width(5);
-            mMap.addPolyline(polylineOptions);
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                for (LatLng latLng : locations) {
+                    builder.include(latLng);
+                }
+                LatLngBounds bounds = builder.build();
+                int padding = 100;
+                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+                mMap.moveCamera(cu);
 
-            // Ustawienie widoku mapy tak, aby objął całą trasę
-            LatLngBounds.Builder builder = new LatLngBounds.Builder();
-            for (LatLng latLng : locations) {
-                builder.include(latLng);
+                lineView.setLocations(locations);
             }
-            LatLngBounds bounds = builder.build();
-            int padding = 100; // padding around start and end marker
-            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-            mMap.moveCamera(cu);
         }
-
-        // Przekazanie danych do LineView
-        lineView.setLocations(locations);
     }
 }
