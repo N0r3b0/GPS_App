@@ -13,10 +13,4 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.example.gps_service.LineView
-        android:id="@+id/lineView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent"/>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

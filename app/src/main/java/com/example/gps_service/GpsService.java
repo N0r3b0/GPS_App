@@ -33,7 +33,7 @@ public class GpsService extends Service implements LocationListener
     public int onStartCommand(Intent intent, int flags, int startId) {
         currentRouteId = dbHelper.startNewRoute();
         try {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, this);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 2, this);
         } catch (SecurityException e) {
             e.printStackTrace();
         }

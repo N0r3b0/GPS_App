@@ -19,7 +19,6 @@ import java.util.List;
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
     private LocationDatabaseHelper dbHelper;
-    private LineView lineView;
     private long routeId;
 
     @Override
@@ -28,7 +27,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_maps);
 
         dbHelper = new LocationDatabaseHelper(this);
-        lineView = findViewById(R.id.lineView);
 
         routeId = getIntent().getLongExtra("routeId", -1);
 
@@ -45,7 +43,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (routeId != -1) {
             List<LatLng> locations = dbHelper.getLocationsForRoute(routeId);
             if (locations.size() > 0) {
-                PolylineOptions polylineOptions = new PolylineOptions().addAll(locations).color(Color.RED).width(5);
+                PolylineOptions polylineOptions = new PolylineOptions().addAll(locations).color(Color.RED).width(25);
                 mMap.addPolyline(polylineOptions);
 
                 LatLngBounds.Builder builder = new LatLngBounds.Builder();
@@ -56,8 +54,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 int padding = 100;
                 CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
                 mMap.moveCamera(cu);
-
-                lineView.setLocations(locations);
             }
         }
     }

@@ -86,22 +86,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-//    private ServiceConnection connection = new ServiceConnection() {
-//        @Override
-//        public void onServiceConnected(ComponentName comName, IBinder binder) {
-//            GpsService.Connection con = (GpsService.Connection) binder;
-//            gpsService = con.getGps();
-//            gpsService.setHandler(handler); // ustawiam handlera teraz nie będzie !null wewnątrz gps clss
-//            bound = true;
-//            Log.v("onServiceConnected", "Service connected");
-//        }
-//        @Override
-//        public void onServiceDisconnected(ComponentName comName){
-//            bound = false;
-//            Log.v("onServiceDisconnected", "Service disconnected");
-//        }
-//    };
-
     private BroadcastReceiver updateDistanceReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -138,8 +122,5 @@ public class MainActivity extends AppCompatActivity {
 
         Toast.makeText(this, running, Toast.LENGTH_LONG).show();
         info.setText(running);
-    }
-    public void showLocations(View v)
-    {
     }
 }
