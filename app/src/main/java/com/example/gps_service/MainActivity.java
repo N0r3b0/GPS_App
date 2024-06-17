@@ -1,26 +1,32 @@
 package com.example.gps_service;
 
-import android.annotation.SuppressLint;
+import com.example.gps_service.R;
+
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
 
-public class MainActivity extends AppCompatActivity {
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
+import com.google.android.material.navigation.NavigationView;
+
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     TextView tVLocation, tVLatitude, tVLongitude, info;
     private GpsService gpsService;
     private boolean isTracking = false;
@@ -29,21 +35,38 @@ public class MainActivity extends AppCompatActivity {
     private Intent intent;
     private Handler handler;
     private LocationDatabaseHelper dbHelper; // baza danych
+    private DrawerLayout drawer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            Log.v("saved", String.valueOf(savedInstanceState.getDouble("distance")));
+        setContentView(R.layout.activity_main); // Ustawienie layoutu tutaj
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        drawer = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+
+        if (navigationView == null) {
+            Log.e("MainActivity", "NavigationView is null");
+        } else {
+            Log.d("MainActivity", "NavigationView initialized successfully");
+        }
+
+        navigationView.setNavigationItemSelectedListener(this);
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        if (savedInstanceState == null) {
+            navigationView.setCheckedItem(R.id.nav_home);
         }
 
         gpsServiceIntent = new Intent(this, GpsService.class);
-
-        setContentView(R.layout.activity_main);
-        tVLocation = findViewById(R.id.tVLocation);
-        tVLatitude = findViewById(R.id.tVLatitude);
-        tVLongitude = findViewById(R.id.tVLongitude);
-        info = findViewById(R.id.info);
 
         handler = new Handler(Looper.getMainLooper());
 
@@ -122,5 +145,34 @@ public class MainActivity extends AppCompatActivity {
 
         Toast.makeText(this, running, Toast.LENGTH_LONG).show();
         info.setText(running);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.nav_home) {
+        } else if (id == R.id.nav_routes) {
+            startActivity(new Intent(this, RoutesListActivity.class));
+        } else if (id == R.id.nav_settings) {
+            // Add your settings activity or fragment here
+        }
+
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+        super.onPointerCaptureChanged(hasCapture);
+    }
+    @Override
+    public void onBackPressed() {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
 }
