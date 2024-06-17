@@ -1,5 +1,5 @@
-# GPS_App
-### Android app built in Android Studio using Java. Tracks GPS location, allows you to save and view routes
+# GPS_App  
+Android app built in Android Studio using Java. Tracks GPS location, allows you to save and view routes
 
 ## **Home view**  
 ![image](https://github.com/N0r3b0/GPS_App/assets/92164691/a927cf95-06b6-41f1-bc8a-f81c16857d0c)
