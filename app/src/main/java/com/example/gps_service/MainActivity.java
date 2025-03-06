@@ -80,10 +80,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(View v) {
                 if (!isTracking) {
+                    // Utwórz nową trasę w bazie danych
+                    long newRouteId = dbHelper.startNewRoute();
+                    gpsServiceIntent.putExtra("routeId", newRouteId);
                     startService(gpsServiceIntent);
                     isTracking = true;
-                    // Przejdź do ekranu mapy
+
+                    // Przejdź do ekranu mapy z flagą isTracking i routeId
                     Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                    intent.putExtra("isTracking", true);
+                    intent.putExtra("routeId", newRouteId); // Przekaż routeId
                     startActivity(intent);
                 }
             }

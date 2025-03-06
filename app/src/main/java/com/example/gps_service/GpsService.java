@@ -31,9 +31,10 @@ public class GpsService extends Service implements LocationListener
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        currentRouteId = dbHelper.startNewRoute();
+        Log.d("GpsService", "onStartCommand called");
+        currentRouteId = intent.getLongExtra("routeId", -1);
         try {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 2, this);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 50, 2, this);
         } catch (SecurityException e) {
             e.printStackTrace();
         }
@@ -43,8 +44,10 @@ public class GpsService extends Service implements LocationListener
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d("GpsService", "onDestroy called");
         locationManager.removeUpdates(this);
-        dbHelper.endRoute(currentRouteId);
+//        dbHelper.endRoute(currentRouteId);
+//        Log.d("GpsService", "Route ended with ID: " + currentRouteId);
     }
 
     @Override

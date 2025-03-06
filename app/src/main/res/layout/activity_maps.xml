@@ -30,5 +30,7 @@
         android:elevation="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"/> <!-- Domyślnie przycisk jest ukryty -->
+
 </androidx.constraintlayout.widget.ConstraintLayout>

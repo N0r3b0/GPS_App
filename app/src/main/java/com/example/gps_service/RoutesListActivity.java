@@ -2,6 +2,7 @@ package com.example.gps_service;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,6 +82,7 @@ public class RoutesListActivity extends AppCompatActivity implements NavigationV
                 long routeId = (long) parent.getItemAtPosition(position);
                 Intent intent = new Intent(RoutesListActivity.this, MapsActivity.class);
                 intent.putExtra("routeId", routeId);
+                intent.putExtra("isTracking", false); // Wyświetlanie historii trasy
                 startActivity(intent);
             }
         });
