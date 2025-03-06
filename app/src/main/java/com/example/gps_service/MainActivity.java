@@ -1,7 +1,5 @@
 package com.example.gps_service;
 
-import com.example.gps_service.R;
-
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -37,7 +35,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private LocationDatabaseHelper dbHelper; // baza danych
     private DrawerLayout drawer;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,39 +67,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         handler = new Handler(Looper.getMainLooper());
 
-        dbHelper = new LocationDatabaseHelper(this); // incjacja obiektu bazy
+        dbHelper = new LocationDatabaseHelper(this); // inicjacja obiektu bazy
 
         IntentFilter filter = new IntentFilter("com.example.labuslugionly.UPDATE_DISTANCE");
         registerReceiver(updateDistanceReceiver, filter, RECEIVER_EXPORTED);
 
-        // routes buttons
-        Button startTrackingButton = findViewById(R.id.startTrackingButton);
-        Button stopTrackingButton = findViewById(R.id.stopTrackingButton);
-        Button showMapButton = findViewById(R.id.showMapButton);
+        // Przyciski
+        Button newRouteButton = findViewById(R.id.newRouteButton);
+        Button showHistoryButton = findViewById(R.id.showHistoryButton);
 
-        startTrackingButton.setOnClickListener(new View.OnClickListener() {
+        newRouteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!isTracking) {
                     startService(gpsServiceIntent);
                     isTracking = true;
+                    // Przejdź do ekranu mapy
+                    Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                    startActivity(intent);
                 }
             }
         });
 
-        stopTrackingButton.setOnClickListener(new View.OnClickListener() {
+        showHistoryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isTracking) {
-                    stopService(gpsServiceIntent);
-                    isTracking = false;
-                }
-            }
-        });
-
-        showMapButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                // Przejdź do ekranu historii tras
                 Intent intent = new Intent(MainActivity.this, RoutesListActivity.class);
                 startActivity(intent);
             }
@@ -125,48 +115,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     };
 
-    public void stop(View v){
-        intent = new Intent(this, GpsService.class);
-        stopService(intent);
-    }
-    public void test(View v) {
-        String running = "";
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            running += service.service.getClassName();
-        }
-
-        if(!running.isEmpty() && !bound)  // run but not bound
-            running = "Service disconnected but still working";
-        else if(running.isEmpty())
-            running = "Service disconnected and not working";
-
-
-        Toast.makeText(this, running, Toast.LENGTH_LONG).show();
-        info.setText(running);
-    }
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
+            // Jesteśmy już w MainActivity, nie trzeba nic robić
         } else if (id == R.id.nav_routes) {
             startActivity(new Intent(this, RoutesListActivity.class));
         } else if (id == R.id.nav_settings) {
-            // Add your settings activity or fragment here
+            // Dodaj obsługę ustawień
         }
 
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-
-    @Override
-    public void onPointerCaptureChanged(boolean hasCapture) {
-        super.onPointerCaptureChanged(hasCapture);
-    }
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {

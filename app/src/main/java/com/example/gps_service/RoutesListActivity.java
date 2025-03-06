@@ -4,9 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -45,7 +49,30 @@ public class RoutesListActivity extends AppCompatActivity implements NavigationV
         routesListView = findViewById(R.id.routesListView);
 
         List<Long> routes = dbHelper.getAllRoutes();
-        ArrayAdapter<Long> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, routes);
+        ArrayAdapter<Long> adapter = new ArrayAdapter<Long>(this, R.layout.list_item_route, routes) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                if (convertView == null) {
+                    convertView = getLayoutInflater().inflate(R.layout.list_item_route, parent, false);
+                }
+
+                TextView routeInfoTextView = convertView.findViewById(R.id.routeInfoTextView);
+                Button deleteButton = convertView.findViewById(R.id.deleteButton);
+
+                long routeId = getItem(position);
+                String routeInfo = dbHelper.getRouteInfo(routeId); // Metoda do pobrania informacji o trasie
+                routeInfoTextView.setText(routeInfo);
+
+                deleteButton.setOnClickListener(v -> {
+                    dbHelper.deleteRoute(routeId);
+                    routes.remove(position);
+                    notifyDataSetChanged();
+                    Toast.makeText(RoutesListActivity.this, "Trasa usunięta", Toast.LENGTH_SHORT).show();
+                });
+
+                return convertView;
+            }
+        };
         routesListView.setAdapter(adapter);
 
         routesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -66,9 +93,9 @@ public class RoutesListActivity extends AppCompatActivity implements NavigationV
         if (id == R.id.nav_home) {
             startActivity(new Intent(this, MainActivity.class));
         } else if (id == R.id.nav_routes) {
-            // Already in RoutesListActivity, no action needed
+            // Jesteśmy już w RoutesListActivity, nie trzeba nic robić
         } else if (id == R.id.nav_settings) {
-            // Add your settings activity or fragment here
+            // Dodaj obsługę ustawień
         }
 
         drawer.closeDrawer(GravityCompat.START);

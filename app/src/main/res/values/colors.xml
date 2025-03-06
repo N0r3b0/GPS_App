@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="colorPrimary">#FF9800</color> <!-- Pomarańczowy -->
+    <color name="colorPrimaryDark">#F57C00</color> <!-- Ciemniejszy pomarańczowy -->
+    <color name="colorAccent">#FFC107</color> <!-- Jasny pomarańczowy -->
+    <color name="colorBackground">#FFF3E0</color> <!-- Bardzo jasny pomarańczowy -->
+    <color name="colorText">#212121</color> <!-- Ciemny szary -->
+    <color name="colorButton">#FF9800</color> <!-- Pomarańczowy -->
+    <color name="colorButtonText">#FFFFFF</color> <!-- Biały -->
+    <color name="colorNavHeader">#F57C00</color> <!-- Ciemniejszy pomarańczowy -->
 </resources>

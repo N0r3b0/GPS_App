@@ -5,12 +5,14 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorBackground"
     tools:context=".MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <!-- Toolbar -->
         <androidx.appcompat.widget.Toolbar
@@ -18,30 +20,32 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            android:theme="?attr/actionBarTheme" />
+            android:theme="?attr/actionBarTheme"
+            android:elevation="4dp" />
 
         <!-- Zawartość główna -->
         <Button
-            android:id="@+id/startTrackingButton"
-            android:layout_width="wrap_content"
+            android:id="@+id/newRouteButton"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="Nowa trasa"
+            android:backgroundTint="@color/colorButton"
+            android:textColor="@color/colorButtonText"
+            android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
-            android:text="Start Tracking" />
+            android:textAllCaps="false"
+            android:elevation="4dp"/>
 
         <Button
-            android:id="@+id/stopTrackingButton"
-            android:layout_width="wrap_content"
+            android:id="@+id/showHistoryButton"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="Pokaż historię tras"
+            android:backgroundTint="@color/colorButton"
+            android:textColor="@color/colorButtonText"
             android:layout_marginBottom="16dp"
-            android:text="Stop Tracking" />
-
-        <Button
-            android:id="@+id/showMapButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:text="Show Map" />
-
+            android:textAllCaps="false"
+            android:elevation="4dp"/>
     </LinearLayout>
 
     <!-- Navigation Drawer -->
@@ -51,5 +55,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:menu="@menu/drawer_menu"
-        app:headerLayout="@layout/nav_header" />
+        app:headerLayout="@layout/nav_header"
+        android:background="@color/colorBackground"/>
 </androidx.drawerlayout.widget.DrawerLayout>
