@@ -34,7 +34,7 @@ public class GpsService extends Service implements LocationListener
         Log.d("GpsService", "onStartCommand called");
         currentRouteId = intent.getLongExtra("routeId", -1);
         try {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 50, 2, this);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 2, this);
         } catch (SecurityException e) {
             e.printStackTrace();
         }
