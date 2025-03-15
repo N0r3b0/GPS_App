@@ -27,25 +27,27 @@
         <Button
             android:id="@+id/newRouteButton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Nowa trasa"
-            android:backgroundTint="@color/colorButton"
-            android:textColor="@color/colorButtonText"
+            android:layout_height="125dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
+            android:autoSizeTextType="uniform"
+            android:backgroundTint="@color/colorButton"
+            android:elevation="4dp"
+            android:text="Rozpocznij nową trasę"
             android:textAllCaps="false"
-            android:elevation="4dp"/>
+            android:textColor="@color/colorButtonText" />
 
         <Button
             android:id="@+id/showHistoryButton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Pokaż historię tras"
-            android:backgroundTint="@color/colorButton"
-            android:textColor="@color/colorButtonText"
+            android:layout_height="125dp"
             android:layout_marginBottom="16dp"
+            android:autoSizeTextType="uniform"
+            android:backgroundTint="@color/colorButton"
+            android:elevation="4dp"
+            android:text="Pokaż historię tras"
             android:textAllCaps="false"
-            android:elevation="4dp"/>
+            android:textColor="@color/colorButtonText" />
     </LinearLayout>
 
     <!-- Navigation Drawer -->

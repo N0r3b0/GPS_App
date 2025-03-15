@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,8 +32,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
@@ -99,34 +104,49 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         } else if (isTracking) {
             startTracking();
+            Log.d("MapsActivity", "Tracking started");
         }
     }
 
     private void startTracking() {
         currentPolyline = mMap.addPolyline(new PolylineOptions().color(Color.RED).width(25));
 
-        // Uruchom okresowe odświeżanie trasy
         updateRouteRunnable = new Runnable() {
             @Override
             public void run() {
                 List<LatLng> locations = dbHelper.getLocationsForRoute(routeId);
                 if (locations.size() > 0) {
                     currentPolyline.setPoints(locations);
-
-                    // Przesuń kamerę do ostatniej lokalizacji
                     LatLng lastLocation = locations.get(locations.size() - 1);
+
                     if (zoom == 0) {
                         float zoomLevel = 15.0f;
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, zoomLevel));
                         zoom++;
+
+                        // Pobierz nazwę miejscowości
+                        new Thread(() -> {
+                            try {
+                                Geocoder geocoder = new Geocoder(MapsActivity.this, Locale.getDefault());
+                                List<Address> addresses = geocoder.getFromLocation(
+                                        lastLocation.latitude,
+                                        lastLocation.longitude,
+                                        1
+                                );
+                                if (!addresses.isEmpty() && addresses.get(0).getLocality() != null) {
+                                    String city = addresses.get(0).getLocality();
+                                    dbHelper.updateRouteCity(routeId, city);
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }).start();
                     }
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(lastLocation));
                 }
-
                 handler.postDelayed(this, 50);
             }
         };
-
         handler.post(updateRouteRunnable);
     }
 

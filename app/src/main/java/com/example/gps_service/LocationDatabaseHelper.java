@@ -20,7 +20,7 @@ import java.util.Locale;
 
 public class LocationDatabaseHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "locations.db";
     private final Context context;
 
@@ -34,7 +34,8 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
         String CREATE_ROUTES_TABLE = "CREATE TABLE routes (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "start_time INTEGER," +
-                "end_time INTEGER" +
+                "end_time INTEGER," +
+                "city_name TEXT" +
                 ")";
         db.execSQL(CREATE_ROUTES_TABLE);
 
@@ -63,6 +64,14 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
         long routeId = db.insert("routes", null, values);
         db.close();
         return routeId;
+    }
+
+    public void updateRouteCity(long routeId, String cityName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("city_name", cityName);
+        db.update("routes", values, "id = ?", new String[]{String.valueOf(routeId)});
+        db.close();
     }
 
     public void endRoute(long routeId) {
@@ -127,59 +136,27 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
 
     public String getRouteInfo(long routeId) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT start_time FROM routes WHERE id = ?", new String[]{String.valueOf(routeId)});
+        Cursor cursor = db.rawQuery("SELECT start_time, end_time, city_name FROM routes WHERE id = ?", new String[]{String.valueOf(routeId)});
 
         if (cursor.moveToFirst()) {
             @SuppressLint("Range") long startTime = cursor.getLong(cursor.getColumnIndex("start_time"));
+            @SuppressLint("Range") long endTime = cursor.getLong(cursor.getColumnIndex("end_time"));
+            @SuppressLint("Range") String cityName = cursor.getString(cursor.getColumnIndex("city_name"));
             cursor.close();
 
-            // Przykład formatowania daty i godziny
+            // Formatowanie daty i godziny
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-            String formattedDate = sdf.format(new Date(startTime));
+            String formattedStartDate = sdf.format(new Date(startTime));
+            String formattedEndDate = sdf.format(new Date(endTime));
 
-            // Pobierz miejscowość (możesz użyć Geocoder, aby uzyskać nazwę miejscowości na podstawie współrzędnych)
-            // Tutaj zakładam, że masz metodę getFirstLocationForRoute, która zwraca pierwszą lokalizację dla trasy
-            LatLng firstLocation = getFirstLocationForRoute(routeId);
-            String locationName = "Unknown Location"; // Domyślna wartość
-            if (firstLocation != null) {
-                locationName = getLocationName(firstLocation.latitude, firstLocation.longitude);
-            }
-
-            return routeId + ", " + formattedDate + ", " + locationName;
+            // Zwróć informacje o trasie, w tym nazwę miasta
+            return "Rozpoczęta: " + formattedStartDate + "\nZakończona: " + formattedEndDate
+                    + "\nMiejscowość: " + (cityName != null ? cityName : "Nieznana");
         }
 
         cursor.close();
-        return "Unknown Route";
+        return "Nieznana trasa";
     }
 
-    private LatLng getFirstLocationForRoute(long routeId) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT latitude, longitude FROM locations WHERE route_id = ? LIMIT 1", new String[]{String.valueOf(routeId)});
-
-        if (cursor.moveToFirst()) {
-            @SuppressLint("Range") double latitude = cursor.getDouble(cursor.getColumnIndex("latitude"));
-            @SuppressLint("Range") double longitude = cursor.getDouble(cursor.getColumnIndex("longitude"));
-            cursor.close();
-            return new LatLng(latitude, longitude);
-        }
-
-        cursor.close();
-        return null;
-    }
-
-    private String getLocationName(double latitude, double longitude) {
-        // Użyj Geocoder, aby uzyskać nazwę miejscowości na podstawie współrzędnych
-        // To wymaga połączenia z internetem
-        Geocoder geocoder = new Geocoder(context, Locale.getDefault()); // Use stored context
-        try {
-            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
-            if (addresses != null && !addresses.isEmpty()) {
-                return addresses.get(0).getLocality(); // Zwróć nazwę miejscowości
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "Unknown Location";
-    }
 
 }
