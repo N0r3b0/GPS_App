@@ -25,20 +25,15 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    TextView tVLocation, tVLatitude, tVLongitude, info;
-    private GpsService gpsService;
     private boolean isTracking = false;
     private Intent gpsServiceIntent;
-    private boolean bound;
-    private Intent intent;
-    private Handler handler;
-    private LocationDatabaseHelper dbHelper; // baza danych
+    private LocationDatabaseHelper dbHelper;
     private DrawerLayout drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main); // Ustawienie layoutu tutaj
+        setContentView(R.layout.activity_main);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -64,15 +59,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         gpsServiceIntent = new Intent(this, GpsService.class);
-
-        handler = new Handler(Looper.getMainLooper());
-
         dbHelper = new LocationDatabaseHelper(this); // inicjacja obiektu bazy
 
-        IntentFilter filter = new IntentFilter("com.example.labuslugionly.UPDATE_DISTANCE");
-        registerReceiver(updateDistanceReceiver, filter, RECEIVER_EXPORTED);
-
-        // Przyciski
         Button newRouteButton = findViewById(R.id.newRouteButton);
         Button showHistoryButton = findViewById(R.id.showHistoryButton);
 
@@ -104,22 +92,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
     }
-
-    private BroadcastReceiver updateDistanceReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            double latitude = intent.getDoubleExtra("latitude", 0);
-            double longitude = intent.getDoubleExtra("longitude", 0);
-            double steps = intent.getDoubleExtra("steps", 0);
-            String distance = intent.getStringExtra("distance");
-
-            Log.v("BroadcastReceiver", "Received update: latitude=" + latitude + ", longitude=" + longitude + ", distance=" + distance);
-
-            tVLatitude.setText("Latitude: " + String.valueOf(latitude));
-            tVLongitude.setText("Longitude: " + String.valueOf(longitude));
-            tVLocation.setText(distance);
-        }
-    };
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {

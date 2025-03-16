@@ -44,7 +44,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private long routeId;
     private boolean isTracking = false;
     private Polyline currentPolyline;
-    private List<LatLng> currentRoute = new ArrayList<>();
     private Button stopTrackingButton;
     private Handler handler = new Handler();
     private Runnable updateRouteRunnable;
