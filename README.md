@@ -2,7 +2,7 @@
 Android app built in Android Studio using Java. Tracks GPS location, allows you to save and view routes
 
 ## **Home view**  
-![image](https://github.com/N0r3b0/GPS_App/assets/92164691/a927cf95-06b6-41f1-bc8a-f81c16857d0c)
+![image](https://github.com/user-attachments/assets/2fe5fa41-9126-4933-89ca-55c71ff23c3b)
 
 **Start Tracking** button starts the GPS service and creates a new route with a start time in the database.  
 **Stop Tracking** button stops the GPS service and puts route's endtime in the database.  
@@ -61,7 +61,8 @@ showMapButton.setOnClickListener(new View.OnClickListener() {
 ```
 
 ## **Routes view**  
-![image](https://github.com/N0r3b0/GPS_App/assets/92164691/3f1f2c56-bf8f-4a33-81ce-a030207fb794)
+![image](https://github.com/user-attachments/assets/d1ef080d-a8ef-420a-a30e-347343cbc961)
+
 
 Each item on the list is a route and after being clicked it displays its map by starting MapsActivity with routeId inside Intent object. List uses ArrayAdapter 
 ```java
@@ -81,7 +82,8 @@ List<Long> routes = dbHelper.getAllRoutes();
 ```
 
 ## **Route map**
-![image](https://github.com/N0r3b0/GPS_App/assets/92164691/02267bdc-0690-4a4a-ba8f-f6707ef8f451)
+![image](https://github.com/user-attachments/assets/d01c62bc-1693-4b8d-9bce-434615d3f3ac)
+
 
 Route map is displayed through MapsActivity class which impements OnMapReadyCallback google interface. Function onMapReady is called before opening the map and allows to configure the route polyline, camera focus and other settings.
 ```java
