@@ -111,7 +111,8 @@ Route map is displayed through MapsActivity class which impements OnMapReadyCall
 ```
 
 ## **Navigation panel**  
-![image](https://github.com/N0r3b0/GPS_App/assets/92164691/b32ad8e7-059b-43fb-b81b-753fa9396731)
+![image](https://github.com/user-attachments/assets/815ff63d-63c0-459b-b1cc-d8e45b590f88)
+
 
 Navigation panel was made with NavigationView.OnNavigationItemSelectedListener interface and it uses nav_header.xml layout and drawer_menu.xml menu.  
 Toolbar item is used to open navigation panel
@@ -126,12 +127,12 @@ toggle.syncState();
 ## **SQLite Database**  
 **Locations table** is used to store coordinates and the route they belong to. It contains 4 fields {id, route_id, latitude, longitude}   
 **Locations table:**    
-![image](https://github.com/N0r3b0/GPS_App/assets/92164691/75679634-6a6b-4925-b27b-4fcec889818f)
+![image](https://github.com/user-attachments/assets/dc75853c-66cc-4059-8f2b-858da529f865)
 
 
-**Routes** table has 3 fields {id, start_time, end_time}  
+**Routes** table has 3 fields {id, start_time, end_time, city_name}  
 **Routes table**  
-![image](https://github.com/N0r3b0/GPS_App/assets/92164691/3d89c153-935b-4006-aff8-c431a7067c0f)
+![image](https://github.com/user-attachments/assets/aaf1b2ab-ecd1-49f7-a874-961be42b3e0a)
 
 
 ### Funtion that retrieves the coordinates of the selected route
